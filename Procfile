@@ -1,1 +1,1 @@
-web: ./pop
+web: ./bin/pop
