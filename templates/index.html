@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Pop!</title>
+  </head>
+
+  <body>
+    <p>Hello, world!</p>
+
+    <div>
+        <p>Submissions:</p>
+      <ul>
+        {{range.Suggestions}}
+        <li>
+          <div>
+            <p>{{.Name}}</p>
+            <p>{{.Count}}</p>
+          </div>
+        </li>
+        {{end}}
+      </ul>
+    </div>
+    <div>
+        <a href="/submit">Submit a new name</a>
+    </div>
+  </body>
+</html>

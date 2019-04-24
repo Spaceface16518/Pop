@@ -1,0 +1,11 @@
+language: go
+
+go: 1.12.x
+
+deploy:
+  provider: heroku
+  on:
+    tags: true
+  skip_cleanup: true
+  api_key: HEROKU_DEPLOY_KEY
+  app: pop-suggest
