@@ -1,15 +1,15 @@
 language: go
-
+services:
+- postgresql
 go: 1.12.x
-
 env:
-  global:
-    GO111MODULE=on
-
+  global: GO111MODULE=on
 deploy:
   provider: heroku
   on:
     tags: true
+  all_branches: true
   skip_cleanup: true
-  api_key: HEROKU_DEPLOY_KEY
+  api_key:
+    secure: QyoD9GJ5ZOgutWLebXJftiA0X1d5Kdg47wQqjWAi/w626Nv0IYLpSZ9ZfWghPPs9fTFAHKs73fnLwJtnhy1u7w1CbynNp8+4UxUk9TfRYhhmrNOEV/yQrFx7XrYtoO1/SMq1BX6ySqHNho4nIk499xNQEhVLLWdGr1VwHjX0J+UdiJusX96T1hUdPADOhc6ALpko0QoceQrCNMTcxTbTOZNfu0KX/iU8qzX2Htsix5ehOxFdxWh+Gh6GEBSDtseX9ZlnuGuqzr88ykILMwre6d7e9B+BWKR9QqR6rb2SE+RJjCQTU29Sy5+jdBXL7YvcaFKSawsrxiuLgRaOQQ/AWMA3IHLtC7byCEQo1sd4IQYLgsE/t1gO9t40hZOOldeiGhTs9UYFZL5BrR96uZEnUXW7PI0kQaD9uaw+rYg4Zt9pm/EoSxtJsaaY5ja4Ilp4dGFMik5atlXnzhuo0pokpNwW5Ij/VeMHqrwGA0CCsM1ai71IWQJIq5dKUVl0gCm1pt5viyn+h26Okj8WBYM9vBnSNpOTLcX78kbC4dc9OXY5O4SL2gxm1x79UhX9gAfPu2uecNMSlG8HYMuSg5q7upkUttY3f7JgTjMbJi2YRaaq62qVAZLK0pYXrEjBmHX3O2i1naVEKZ/kodBBdGSYUdv9Q0/P+aloXvzZOm9zOpM=
   app: pop-suggest
