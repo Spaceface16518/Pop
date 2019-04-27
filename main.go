@@ -1,44 +1,94 @@
 package main
 
 import (
+	"database/sql"
+	_ "github.com/lib/pq"
 	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"pop/herokuenv"
+	"pop/shutdown"
+	"pop/store"
 	"pop/suggestion"
+	"sync"
 
 	"github.com/gorilla/mux"
 )
 
 var tmpl *template.Template
 var names map[string]int
+var namesLock sync.RWMutex
+var wg sync.WaitGroup
 var submitPage []byte
+var saveEnv bool
 
 func init() {
+	log.SetOutput(os.Stderr)
+
 	tmpl = template.Must(template.ParseFiles("templates/index.html"))
 
 	submitPageFile, openErr := os.Open("templates/submit.html")
+	defer submitPageFile.Close()
 	if openErr != nil {
 		log.Fatal(openErr)
 	}
-	defer submitPageFile.Close()
 	var err error
 	submitPage, err = ioutil.ReadAll(submitPageFile)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	names = map[string]int{}
 }
 
 func main() {
+	if !herokuenv.DatabaseURIExists() {
+		log.Fatalln("$DATABASE_URL must be set")
+		return
+	}
+
+	db, err := sql.Open("postgres", herokuenv.DatabaseURI)
+	if err != nil {
+		panic(err)
+	}
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+	log.Println("Ping succeded")
+
+	store.SetStore(store.NewDataStore(db))
+	defer store.DataStore.Close()
+
+	if err := store.DataStore.InitTable(); err != nil {
+		panic(err)
+	}
+	log.Println("Table initialization succeded")
+
+	s, err := store.DataStore.Load()
+	if err != nil {
+		log.Fatalf("Loading from the database failed: %v\n", err)
+	}
+	log.Println("Loading from the database succeded")
+	namesLock.Lock()
+	names = s
+	namesLock.Unlock()
+
 	router := newRouter()
 
 	serveURI := "0.0.0.0:" + herokuenv.Port
-	log.Printf("Serving at %s\n", serveURI)
-	http.ListenAndServe(serveURI, router)
+	server := http.Server{
+		Addr:    serveURI,
+		Handler: router,
+	}
+	wg.Add(1)
+	go shutdown.WaitShutdown(&server, &wg)
+	log.Printf("Listening at %s\n", serveURI)
+	server.ListenAndServe()
+
+	wg.Wait()
+	// TODO: extra save needed?
 }
 
 func newRouter() *mux.Router {
@@ -58,8 +108,12 @@ func newRouter() *mux.Router {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	go log.Println("Index page hit")
+	log.Println("Index page hit")
+
+	namesLock.RLock()
 	suggestionList := suggestion.NewSuggestions(&names)
+	namesLock.RUnlock()
+
 	tmpl.Execute(w, suggestionList)
 }
 
@@ -70,7 +124,7 @@ func submitPageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func submitHandler(w http.ResponseWriter, r *http.Request) {
-	go log.Println("Submit endpoint hit")
+	log.Println("Submit endpoint hit")
 
 	err := r.ParseForm()
 	if err != nil {
@@ -81,7 +135,12 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
 
 	name := r.FormValue("name")
 
+	namesLock.Lock()
 	names[name]++
+	namesLock.Unlock()
+
+	wg.Add(1)
+	go store.ConcurrentSave(names, store.DataStore, &wg)
 
 	http.Redirect(w, r, "/", http.StatusFound)
 }
