@@ -87,7 +87,9 @@ func main() {
 	log.Printf("Listening at %s\n", serveURI)
 	server.ListenAndServe()
 
+	log.Println("Waiting for goroutines to finish")
 	wg.Wait()
+	log.Println("Wait group empty; exiting")
 	// TODO: extra save needed?
 }
 
