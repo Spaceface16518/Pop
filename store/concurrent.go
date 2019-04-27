@@ -39,7 +39,6 @@ func ConcurrentSave(n map[string]int, dataStore *DataStoreWrapper, wg *sync.Wait
 	}
 	wwg.Wait()
 	quitChannel <- struct{}{}
-	log.Println("q was written to") // REMOVE
 	close(errorChannel)
 	close(quitChannel)
 	log.Println("Delete succeded")
