@@ -5,7 +5,6 @@ import (
 	"fmt"
 	sq "github.com/Masterminds/squirrel"
 	// "github.com/lib/pq"
-	"log"
 )
 
 const (
