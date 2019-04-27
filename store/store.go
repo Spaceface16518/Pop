@@ -98,7 +98,6 @@ func saveOnTx(memRepr map[string]int, tx *sql.Tx) error {
 		s = s.Values(name, count)
 	}
 	queryString, queryArgs, err := s.ToSql()
-	log.Println(queryString) // REMOVE
 	if err != nil {
 		return err
 	}
