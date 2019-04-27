@@ -47,10 +47,27 @@ func (dataStore *DataStoreWrapper) Save(memRepr map[string]int) error {
 	}()
 
 	if err = saveOnTx(memRepr, tx); err != nil {
-		tx.Rollback()
 		return err
 	}
 
+	return nil
+}
+
+func (dataStore *DataStoreWrapper) Delete(name string) error {
+	tx, err := dataStore.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		} else {
+			tx.Commit()
+		}
+	}()
+	if err = deleteOnTx(name, tx); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -96,6 +113,19 @@ func saveOnTx(memRepr map[string]int, tx *sql.Tx) error {
 	for name, count := range memRepr {
 		s = s.Values(name, count)
 	}
+	queryString, queryArgs, err := s.ToSql()
+	if err != nil {
+		return err
+	}
+
+	if _, err := tx.Exec(queryString, queryArgs...); err != nil {
+		return err
+	}
+	return nil
+}
+
+func deleteOnTx(name string, tx *sql.Tx) error {
+	s := psqlStatementBuilder.Delete(TableName).Where(fmt.Sprintf("%s = $1", NameColumnName), name)
 	queryString, queryArgs, err := s.ToSql()
 	if err != nil {
 		return err
