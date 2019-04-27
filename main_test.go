@@ -57,7 +57,7 @@ func TestRouterGetSubmitHTML(t *testing.T) {
 }
 
 func TestRouterPostSubmit(t *testing.T) {
-
+	t.SkipNow()
 	names = map[string]int{
 		"test": 1,
 	}
@@ -95,7 +95,6 @@ func TestRouterPostSubmit(t *testing.T) {
 }
 
 func TestRouterInvalidRoute(t *testing.T) {
-	t.SkipNow()
 	r := newRouter()
 	server := httptest.NewServer(r)
 
