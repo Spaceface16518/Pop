@@ -1,0 +1,54 @@
+body {
+  background-color: blanchedalmond;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.title {
+  display: flex;
+  flex-direction: column;
+  background-color: lightblue;
+}
+
+.sview {
+  display: flex;
+  flex-direction: column;
+  background-color: aqua;
+}
+
+.sview_header {
+  grid-area: sview_header;
+  color: mediumblue;
+}
+
+.sview_list {
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: mediumblue;
+}
+
+.sview_list > div {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  align-content: space-between;
+  padding: 0.5em;
+  margin-top: 1em;
+  margin-right: 0.5em;
+  margin-left: 0.5em;
+  background-color: blanchedalmond;
+  box-shadow: 0.5em, black;
+}
+
+.sview_list > div > div {
+  padding: 0.25em;
+  margin-right: 0.25em;
+  margin-left: 0.25em;
+}
