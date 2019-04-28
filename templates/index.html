@@ -4,25 +4,35 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link href="/assets/index.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-colors-flat.css">
+    <style>
+      body {
+        font-family: Georgia, 'Times New Roman', Times, serif;
+      }
+
+      h1, h2, h3 {
+        font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+      }
+</style>
     <title>Pop!</title>
   </head>
 
-  <body>
-    <div class="app-container">
-      <div class="title">
-        <p>Welcome to Pop!</p>
-        <p>A website for suggesting names!</p>
-        <a href="/submit">Submit a new name</a>
+  <body class="w3-flat-belize-hole">
+    <div class="w3-container w3-row">
+      <div class="title w3-container w3-col l5">
+        <div class="w3-container w3-panel w3-flat-emerald"><h1>Welcome to Pop!</h1></div>
+        <div class="w3-container w3-panel w3-flat-emerald"><h2>A website for suggesting names!</h2></div>
+        <div class="w3-container w3-panel w3-flat-emerald"><a href="/submit">Submit a new name</a></div>
       </div>
 
-    <div class="sview">
-      <div class="sview_header"><p>Submissions:</p></div>
-      <div class="sview_list">
+    <div class="sview w3-container w3-col l7">
+      <div class="sview_header w3-panel w3-container  w3-flat-emerald"><div><p>Submissions:</p></div></div>
+      <div class="sview_list w3-container  w3-panel w3-flat-emerald">
         {{range .Suggestions}}
-        <div>
-          <div>{{.Name}}</div>
-          <div>{{.Count}}</div>
+        <div class=" w3-panel w3-container w3-row w3-flat-peter-river">
+          <div class="w3-container w3-col l6 m6 s12">{{.Name}}</div>
+          <div class="w3-container w3-col l6 m6 s12">{{.Count}}</div>
         </div>
         {{end}}
       </div>
